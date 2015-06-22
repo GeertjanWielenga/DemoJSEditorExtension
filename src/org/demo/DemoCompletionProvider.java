@@ -51,10 +51,11 @@ public class DemoCompletionProvider implements CompletionProvider {
         if (jsCompletionContext != CompletionContext.OBJECT_PROPERTY) {
             return Collections.EMPTY_LIST;
         }
+        int caretOffset = ccContext.getCaretOffset();
         List<CompletionProposal> result = new ArrayList<CompletionProposal>();
         Set<DemoDataItem> data = getData();
         for (DemoDataItem item : data) {
-            result.add(DemoCompletionProposal.createDemoItem(item, 0));
+            result.add(DemoCompletionProposal.createDemoItem(item, caretOffset));
         }
         return result;
     }
