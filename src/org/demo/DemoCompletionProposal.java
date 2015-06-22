@@ -78,7 +78,7 @@ public class DemoCompletionProposal implements CompletionProposal {
 
     @Override
     public ImageIcon getIcon() {
-        return ImageUtilities.loadImageIcon("org/demo/star.png", true);
+        return ImageUtilities.loadImageIcon("org/demo/icon.jpg", true);
     }
 
     @Override
