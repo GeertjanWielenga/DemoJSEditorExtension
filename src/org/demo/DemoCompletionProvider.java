@@ -43,21 +43,21 @@ public class DemoCompletionProvider implements CompletionProvider {
         return DataLoader.getData(getDataFiles());
     }
 
-@Override
-public List<CompletionProposal> complete(
-        CodeCompletionContext ccContext,
-        CompletionContext jsCompletionContext,
-        String string) {
-    if (jsCompletionContext != CompletionContext.OBJECT_PROPERTY_NAME) {
-        return Collections.EMPTY_LIST;
+    @Override
+    public List<CompletionProposal> complete(
+            CodeCompletionContext ccContext,
+            CompletionContext jsCompletionContext,
+            String string) {
+        if (jsCompletionContext != CompletionContext.OBJECT_PROPERTY) {
+            return Collections.EMPTY_LIST;
+        }
+        List<CompletionProposal> result = new ArrayList<CompletionProposal>();
+        Set<DemoDataItem> data = getData();
+        for (DemoDataItem item : data) {
+            result.add(DemoCompletionProposal.createDemoItem(item, 0));
+        }
+        return result;
     }
-    List<CompletionProposal> result = new ArrayList<CompletionProposal>();
-    Set<DemoDataItem> data = getData();
-    for (DemoDataItem item : data) {
-        result.add(DemoCompletionProposal.createDemoItem(item, 0));
-    }
-    return result;
-}
 
     @Override
     public String getHelpDocumentation(
