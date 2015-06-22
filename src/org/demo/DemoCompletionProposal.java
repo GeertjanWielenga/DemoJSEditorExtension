@@ -11,20 +11,22 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle.Messages;
 
 public class DemoCompletionProposal implements CompletionProposal {
-    
-    static CompletionProposal createDemoItem(DemoDataItem item, int anchorOffset) {
+
+    static CompletionProposal createDemoItem(DemoDataItem item, int anchorOffset, String prefix) {
         ElementHandle element = new DemoElementHandle(item.getName(), item.getDocumentation(), ElementKind.PROPERTY);
-        return new DemoCompletionProposal(item, anchorOffset, element);
+        return new DemoCompletionProposal(item, anchorOffset, element, prefix);
     }
-    
+
     private final int anchorOffset;
     private final ElementHandle element;
     private final DemoDataItem dataItem;
+    private String prefix;
 
-    public DemoCompletionProposal(DemoDataItem item, int anchorOffset, ElementHandle element) {
+    public DemoCompletionProposal(DemoDataItem item, int anchorOffset, ElementHandle element, String prefix) {
         this.anchorOffset = anchorOffset;
         this.element = element;
         this.dataItem = item;
+        this.prefix = prefix;
     }
 
     @Override
@@ -98,10 +100,7 @@ public class DemoCompletionProposal implements CompletionProposal {
 
     @Override
     public String getCustomInsertTemplate() {
-        if (dataItem.getTemplate() != null) {
-            return getName() + ": " + dataItem.getTemplate().trim(); //NOI18N
-        }
-        return null;
+        return getName().replace(prefix, ""); //NOI18N
     }
-    
+
 }

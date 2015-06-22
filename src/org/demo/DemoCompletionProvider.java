@@ -5,14 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import org.netbeans.api.lexer.TokenHierarchy;
-import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.modules.csl.api.CodeCompletionContext;
 import org.netbeans.modules.csl.api.CompletionProposal;
 import org.netbeans.modules.csl.api.ElementHandle;
 import org.netbeans.modules.csl.spi.ParserResult;
-import org.netbeans.modules.javascript2.editor.api.lexer.JsTokenId;
-import org.netbeans.modules.javascript2.editor.api.lexer.LexUtilities;
 import org.netbeans.modules.javascript2.editor.spi.CompletionContext;
 import org.netbeans.modules.javascript2.editor.spi.CompletionProvider;
 import org.openide.filesystems.FileObject;
@@ -47,7 +43,7 @@ public class DemoCompletionProvider implements CompletionProvider {
     public List<CompletionProposal> complete(
             CodeCompletionContext ccContext,
             CompletionContext jsCompletionContext,
-            String string) {
+            String prefix) {
         if (jsCompletionContext != CompletionContext.OBJECT_PROPERTY) {
             return Collections.EMPTY_LIST;
         }
@@ -55,7 +51,9 @@ public class DemoCompletionProvider implements CompletionProvider {
         List<CompletionProposal> result = new ArrayList<CompletionProposal>();
         Set<DemoDataItem> data = getData();
         for (DemoDataItem item : data) {
-            result.add(DemoCompletionProposal.createDemoItem(item, caretOffset));
+            if (item.getName().startsWith(prefix)) {
+                result.add(DemoCompletionProposal.createDemoItem(item, caretOffset, prefix));
+            }
         }
         return result;
     }
