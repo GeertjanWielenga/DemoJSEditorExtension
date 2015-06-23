@@ -2,10 +2,8 @@ package org.demo;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,8 +36,6 @@ public class DataLoader {
                     } else if (type == 2) {
                         while (attributeMatcher.find()) {
                             String attribute = attributeMatcher.group();
-//                            System.out.print("title = " + formattedTitle);
-//                            System.out.println(" / attribute = " + attribute);
                             String formattedAttribute = attribute.replace("### ", "");
                             result.add(new DemoDataItem(formattedTitle, formattedAttribute, null, null, null));
                         }
