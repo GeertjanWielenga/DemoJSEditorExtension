@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 
@@ -15,15 +17,15 @@ public class DataLoader {
     public static Set<DemoDataItem> getData(List<File> files) {
         items.clear();
         for (File file : files) {
-            String name = file.getName();
-            String formattedName
-                    = "kendo"
-                    + Character.toUpperCase(name.charAt(0)) + name.substring(1)
-                    .replace(".md", "");
-            String path = file.getPath();
             try {
-                String text = FileUtil.toFileObject(file).asText();
-                items.add(new DemoDataItem(formattedName, null, escapeHTML(text), null));
+                String asText = FileUtil.toFileObject(file).asText();
+                String pattern = "title: [A-Za-z]+";
+                Pattern p = Pattern.compile(pattern);
+                Matcher matcher = p.matcher(asText);
+                if (matcher.find()) {
+                    String formattedText = matcher.group().replace("title: ", "kendo");
+                    items.add(new DemoDataItem(formattedText, null, escapeHTML(asText), null));
+                }
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
