@@ -1,19 +1,25 @@
 package org.demo;
 
 public class DemoDataItem {
+    private final String parent;
     
     private final String name;
     private final String type;
     private final String documentation;
     private final String template;
 
-    public DemoDataItem(String name, String type, String documentation, String template) {
+    public DemoDataItem(String parent, String name, String type, String documentation, String template) {
+        this.parent = parent;
         this.name = name;
         this.type = type;
         this.documentation = documentation;
         this.template = template;
     }
 
+    public String getParent() {
+        return parent;
+    }
+    
     public String getName() {
         return name;
     }

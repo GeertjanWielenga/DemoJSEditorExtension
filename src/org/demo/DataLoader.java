@@ -2,8 +2,10 @@ package org.demo;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,25 +14,42 @@ import org.openide.util.Exceptions;
 
 public class DataLoader {
 
-    private static final Set<DemoDataItem> items = new HashSet<DemoDataItem>();
+    private static final Set<DemoDataItem> result = new HashSet<DemoDataItem>();
 
-    public static Set<DemoDataItem> getData(List<File> files) {
-        items.clear();
+    public static Set<DemoDataItem> getData(List<File> files, int type) {
+        result.clear();
         for (File file : files) {
             try {
-                String asText = FileUtil.toFileObject(file).asText();
-                String pattern = "title: [A-Za-z]+";
-                Pattern p = Pattern.compile(pattern);
-                Matcher matcher = p.matcher(asText);
-                if (matcher.find()) {
-                    String formattedText = matcher.group().replace("title: ", "kendo");
-                    items.add(new DemoDataItem(formattedText, null, escapeHTML(asText), null));
+                String fileContent = FileUtil.toFileObject(file).asText();
+                //Title:
+                String titleExpression = "title: [A-Za-z]+";
+                Pattern titlePattern = Pattern.compile(titleExpression);
+                Matcher titleMatcher = titlePattern.matcher(fileContent);
+                //Attribute:
+                String attributeExpression = "\\n### [A-Za-z.]+";
+                Pattern attributePattern = Pattern.compile(attributeExpression);
+                Matcher attributeMatcher = attributePattern.matcher(fileContent);
+                //Finders:
+                //http://stackoverflow.com/questions/5516119/regular-expression-to-match-characters-at-beginning-of-line-only
+                if (titleMatcher.find()) {
+                    String formattedTitle = titleMatcher.group().replace("title: ", "kendo");
+                    if (type == 1) {
+                        result.add(new DemoDataItem(null, formattedTitle, null, escapeHTML(fileContent), null));
+                    } else if (type == 2) {
+                        while (attributeMatcher.find()) {
+                            String attribute = attributeMatcher.group();
+//                            System.out.print("title = " + formattedTitle);
+//                            System.out.println(" / attribute = " + attribute);
+                            String formattedAttribute = attribute.replace("### ", "");
+                            result.add(new DemoDataItem(formattedTitle, formattedAttribute, null, null, null));
+                        }
+                    }
                 }
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
-        return items;
+        return result;
     }
 
     //http://stackoverflow.com/questions/9580684/how-to-retrieve-title-of-a-html-with-the-help-of-htmleditorkit
