@@ -24,8 +24,8 @@ public class DataLoader {
                 Pattern titlePattern = Pattern.compile(titleExpression);
                 Matcher titleMatcher = titlePattern.matcher(fileContent);
                 //Attribute:
-                String attributeExpression = "\\n### [A-Za-z.]+";
-                Pattern attributePattern = Pattern.compile(attributeExpression);
+                String attributeExpression = "\\n### [A-Za-z.]+.*?###";
+                Pattern attributePattern = Pattern.compile(attributeExpression, Pattern.DOTALL);
                 Matcher attributeMatcher = attributePattern.matcher(fileContent);
                 //Finders:
                 //http://stackoverflow.com/questions/5516119/regular-expression-to-match-characters-at-beginning-of-line-only
@@ -34,22 +34,22 @@ public class DataLoader {
                     if (type == 1) {
                         result.add(new DemoDataItem(null, formattedTitle, null, escapeHTML(fileContent), null));
                     } else if (type == 2) {
-                        String formattedAttribute = null;
                         while (attributeMatcher.find()) {
-                            StringBuilder sb = new StringBuilder();
                             String attribute = attributeMatcher.group();
-                            formattedAttribute = attribute.replace("### ", "");
-                            //example:
-                            String exampleExpression = "(?s)#### Example.*?###";
-                            Pattern examplePattern = Pattern.compile(exampleExpression, Pattern.DOTALL);
-                            // You're using the whole document
-                            //Matcher exampleMatcher = examplePattern.matcher(fileContent);
-                            Matcher exampleMatcher = examplePattern.matcher(formattedAttribute);
-                            while (exampleMatcher.find()) {
-                                String example = exampleMatcher.group();
-                                sb.append(example);
+                            String lines[] = attribute.split("\\r?\\n");
+                            String attributeName = null;
+                            String attributeDescription = null;
+                            StringBuilder attributeDescriptionBuilder = new StringBuilder();
+                            for (int i = 0; i < lines.length; i++) {
+                                String line = lines[i];
+                                if (i==1){
+                                    attributeName = line.replaceAll("### ", " ");
+                                } else if (!line.isEmpty()){
+                                    attributeDescriptionBuilder.append(line);
+                                }
                             }
-                            result.add(new DemoDataItem(formattedTitle, formattedAttribute, null, escapeHTML(sb.toString()), null));
+                            attributeDescription = attributeDescriptionBuilder.toString().replaceAll("###", "");
+                            result.add(new DemoDataItem(formattedTitle, attributeName, null, attributeDescription, null));
                         }
                     }
                 }
