@@ -34,10 +34,22 @@ public class DataLoader {
                     if (type == 1) {
                         result.add(new DemoDataItem(null, formattedTitle, null, escapeHTML(fileContent), null));
                     } else if (type == 2) {
+                        String formattedAttribute = null;
                         while (attributeMatcher.find()) {
+                            StringBuilder sb = new StringBuilder();
                             String attribute = attributeMatcher.group();
-                            String formattedAttribute = attribute.replace("### ", "");
-                            result.add(new DemoDataItem(formattedTitle, formattedAttribute, null, null, null));
+                            formattedAttribute = attribute.replace("### ", "");
+                            //example:
+                            String exampleExpression = "(?s)#### Example.*?###";
+                            Pattern examplePattern = Pattern.compile(exampleExpression, Pattern.DOTALL);
+                            // You're using the whole document
+                            //Matcher exampleMatcher = examplePattern.matcher(fileContent);
+                            Matcher exampleMatcher = examplePattern.matcher(formattedAttribute);
+                            while (exampleMatcher.find()) {
+                                String example = exampleMatcher.group();
+                                sb.append(example);
+                            }
+                            result.add(new DemoDataItem(formattedTitle, formattedAttribute, null, escapeHTML(sb.toString()), null));
                         }
                     }
                 }
